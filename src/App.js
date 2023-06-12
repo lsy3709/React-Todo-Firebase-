@@ -13,10 +13,10 @@ const App = () => {
     const [newEmail, setNewEmail] = useState(0);
   console.log(newName, newEmail);
 
-   // 이따가 users 추가하고 삭제하는거 진행을 도와줄 state
-   const [users, setUsers] = useState([]);
-   // db의 users 컬렉션을 가져옴
-   const usersCollectionRef = collection(db, "users");
+   
+   const [todos, setTodos] = useState([]);
+   
+   const usersCollectionRef = collection(db, "todos");
 
 /// 유니크 id를 만들기 위한 useId(); - react 18 기능으로, 이 훅을 이렇게 사용하는게 맞고 틀린지는 모른다.
 const uniqueId = useId();
@@ -24,19 +24,16 @@ console.log(uniqueId)
 // 시작될때 한번만 실행
 useEffect(()=>{
   // 비동기로 데이터 받을준비
-  const getUsers = async () => {
+  const getTodos = async () => {
    // getDocs로 컬렉션안에 데이터 가져오기
     const data = await getDocs(usersCollectionRef);
     // users에 data안의 자료 추가. 객체에 id 덮어씌우는거
-    setUsers(data.docs.map((doc)=>({ ...doc.data(), id: doc.id})))
+    setTodos(data.docs.map((doc)=>({ ...doc.data(), id: doc.id})))
   }
-getUsers();
-},[users, usersCollectionRef])
+  getTodos();
+},[todos,usersCollectionRef])
 
-const createUsers = async () =>{
-  // addDoc을 이용해서 내가 원하는 collection에 내가 원하는 key로 값을 추가한다.
-  await addDoc(usersCollectionRef, {name: newName, email:newEmail});
-}
+
 
 // 업데이트 - U
 const updateUser = async( id, email) =>{
@@ -58,51 +55,58 @@ const deleteUser = async(id) =>{
 
 
 // 띄워줄 데이터 key값에 고유ID를 넣어준다.
-const showUsers = users.map((value)=> (<div key={uniqueId}> 
-                                          <h1>Name: {value.name}</h1> 
-                                          <h1>email: {value.email}</h1>
+const showUsers = todos.map((value)=> (<div key={uniqueId}> 
+                                          <h1>ID: {value.id}</h1> 
+                                          <h1>TEXT: {value.text}</h1>
+                                          <h1>CHECKED: {value.checked}</h1>
                                                    {/* 증가버튼은 이 안에 있어야지, 각기 다른 데이터마다 붙는다, users data를 map으로 돌기때문에, 그 안의 id랑 age를 넣어주면 된다.*/}
                                             {/* id를 넣어주는 이유는, 우리가 수정하고자 하는 데이터를 찾아야하기 때문에. */}
-                                            <button onClick={()=>{updateUser(value.id, value.email)}}>Increase email</button>
-                                            <button onClick={()=>{deleteUser(value.id)}}>Delete User</button>
+                                            {/* <button onClick={()=>{updateUser(value.id, value.email)}}>Increase email</button>
+                                            <button onClick={()=>{deleteUser(value.id)}}>Delete User</button> */}
 
                                       </div>))
 
 
 
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: '리액트의 기초 알아보기',
-      checked: true,
-    },
-    {
-      id: 2,
-      text: '컴포넌트 스타일링해 보기',
-      checked: true,
-    },
-    {
-      id: 3,
-      text: '일정 관리 앱 만들어 보기',
-      checked: false,
-    },
-  ]);
+  // const [todos, setTodos] = useState([
+  //   {
+  //     id: 1,
+  //     text: '리액트의 기초 알아보기',
+  //     checked: true,
+  //   },
+  //   {
+  //     id: 2,
+  //     text: '컴포넌트 스타일링해 보기',
+  //     checked: true,
+  //   },
+  //   {
+  //     id: 3,
+  //     text: '일정 관리 앱 만들어 보기',
+  //     checked: false,
+  //   },
+  // ]);
 
   // 고유 값으로 사용 될 id
   // ref 를 사용하여 변수 담기
-  const nextId = useRef(4);
+  const nextId = useRef(1);
 
   const onInsert = useCallback(
     (text) => {
-      const todo = {
-        id: nextId.current,
-        text,
-        checked: false,
-      };
-      setTodos(todos => todos.concat(todo));
+      // const todo = {
+      //   id: nextId.current,
+      //   text,
+      //   checked: false,
+      // };
+      // setTodos(todos => todos.concat(todo));
+      const createTodos = async () =>{
+        // addDoc을 이용해서 내가 원하는 collection에 내가 원하는 key로 값을 추가한다.
+        // await addDoc(usersCollectionRef, {text: newName, email:newEmail});
+        await addDoc(usersCollectionRef,{id:nextId,text:text,checked:false} );
+      }
+      createTodos()
       nextId.current += 1; // nextId 1 씩 더하기
     },
-    [],
+    [usersCollectionRef],
   );
 
   const onRemove = useCallback(
@@ -130,13 +134,10 @@ const showUsers = users.map((value)=> (<div key={uniqueId}>
       <TodoInsert onInsert={onInsert}/>
       <TodoList todos={todos} onRemove={onRemove} onToggle={onToggle} />
       {/* <TodoList users={users} onRemove={onRemove} onToggle={onToggle} /> */}
-      <div className='App'>
+      <div className='App'> 
           {/* onchange를 이용해서, 변하는 값을 state로 저장한다. */}
-      <input type="text" placeholder='name...' onChange={(event)=> {setNewName(event.target.value)}}/>
-      <input type="text" placeholder='email...' onChange={(event)=> {setNewEmail(event.target.value)}}/>
-      <button onClick={createUsers}>Create User</button>
-        {showUsers}
-      </div>
+        {showUsers} 
+       </div> 
     </TodoTemplate>
   );
 };
