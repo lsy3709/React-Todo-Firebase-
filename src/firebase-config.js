@@ -14,14 +14,14 @@ import {getFirestore} from "@firebase/firestore";
 // };
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCMFV6D_z914oX9hE8ENlBuETWx0cfYh30",
-    authDomain: "react-todo-fire-test2.firebaseapp.com",
-    projectId: "react-todo-fire-test2",
-    storageBucket: "react-todo-fire-test2.appspot.com",
-    messagingSenderId: "937580876696",
-    appId: "1:937580876696:web:2157956abb9322a105d1ed",
-    measurementId: "G-ZTWQVWQD7M"
-  };
+  apiKey: "AIzaSyB4Ls21VYK-5WO7pDki9TKmlD27GdxBVfc",
+  authDomain: "react-test-fire3.firebaseapp.com",
+  projectId: "react-test-fire3",
+  storageBucket: "react-test-fire3.appspot.com",
+  messagingSenderId: "44897170025",
+  appId: "1:44897170025:web:49e84e075559b73c29e8f8",
+  measurementId: "G-CDW54L3FT6"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

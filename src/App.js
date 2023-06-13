@@ -54,6 +54,7 @@ const deleteUser = async(id) =>{
 }
 
 
+
 // 띄워줄 데이터 key값에 고유ID를 넣어준다.
 const showUsers = todos.map((value)=> (<div key={uniqueId}> 
                                           <h1>ID: {value.id}</h1> 
@@ -66,44 +67,25 @@ const showUsers = todos.map((value)=> (<div key={uniqueId}>
 
                                       </div>))
 
-
-
-  // const [todos, setTodos] = useState([
-  //   {
-  //     id: 1,
-  //     text: '리액트의 기초 알아보기',
-  //     checked: true,
-  //   },
-  //   {
-  //     id: 2,
-  //     text: '컴포넌트 스타일링해 보기',
-  //     checked: true,
-  //   },
-  //   {
-  //     id: 3,
-  //     text: '일정 관리 앱 만들어 보기',
-  //     checked: false,
-  //   },
-  // ]);
-
   // 고유 값으로 사용 될 id
   // ref 를 사용하여 변수 담기
   const nextId = useRef(1);
 
   const onInsert = useCallback(
     (text) => {
-      // const todo = {
-      //   id: nextId.current,
-      //   text,
-      //   checked: false,
-      // };
-      // setTodos(todos => todos.concat(todo));
+      const todo = {
+        id: nextId.current,
+        text,
+        checked: false,
+      };
+     
       const createTodos = async () =>{
         // addDoc을 이용해서 내가 원하는 collection에 내가 원하는 key로 값을 추가한다.
         // await addDoc(usersCollectionRef, {text: newName, email:newEmail});
         await addDoc(usersCollectionRef,{id:nextId,text:text,checked:false} );
       }
       createTodos()
+       setTodos(todos => todos.concat(todo));
       nextId.current += 1; // nextId 1 씩 더하기
     },
     [usersCollectionRef],
@@ -111,6 +93,14 @@ const showUsers = todos.map((value)=> (<div key={uniqueId}>
 
   const onRemove = useCallback(
     (id) => {
+// 삭제 - D
+const deleteTodo = async(id) =>{
+  // 내가 삭제하고자 하는 db의 컬렉션의 id를 뒤지면서 데이터를 찾는다
+  const userDoc = doc(db, "todos", id);
+  // deleteDoc을 이용해서 삭제
+  await deleteDoc(userDoc);
+}
+  deleteTodo(id)
       setTodos(todos => todos.filter((todo) => todo.id !== id));
     },
     [],
@@ -119,6 +109,24 @@ const showUsers = todos.map((value)=> (<div key={uniqueId}>
 
   const onToggle = useCallback(
     (id) => {
+// 업데이트 - U
+const updateChecked = async( id) =>{
+  // 내가 업데이트 하고자 하는 db의 컬렉션의 id를 뒤지면서 내가 수정하고자 하는 id랑 같은 id값을 가진 데이터를 찾는다
+  const userDoc = doc(db, "todos", id)
+  if(userDoc.checked === true){
+    // 내가 업데이트 하고자 하는 key를 어떻게 업데이트할지 준비,, 중요한점이 db에는 문자열로 저장되어있다. 그래서 createUsers()함수안에서 age를 생성할때 숫자열로 형변환 해줘야한다
+  const newField = {checked: false};
+  // updateDoc()을 이용해서 업데이트
+  await updateDoc(userDoc, newField);
+  } 
+  else if(userDoc.checked === false){
+    const newField = {checked: true};
+    // updateDoc()을 이용해서 업데이트
+    await updateDoc(userDoc, newField);
+  }
+    
+}
+updateChecked(id)
       setTodos(todos =>
         todos.map((todo) =>
           todo.id === id ? { ...todo, checked: !todo.checked } : todo,
