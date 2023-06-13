@@ -9,9 +9,9 @@ import { collection, getDocs , addDoc, updateDoc,deleteDoc, doc} from "firebase/
 const App = () => {
 
     // input으로 받을 새로운 사람의 이름과 나이
-    const [newName, setNewName] = useState("");
-    const [newEmail, setNewEmail] = useState(0);
-  console.log(newName, newEmail);
+  //   const [newName, setNewName] = useState("");
+  //   const [newEmail, setNewEmail] = useState(0);
+  // console.log(newName, newEmail);
 
    
    const [todos, setTodos] = useState([]);
@@ -32,27 +32,6 @@ useEffect(()=>{
   }
   getTodos();
 },[todos,usersCollectionRef])
-
-
-
-// 업데이트 - U
-const updateUser = async( id, email) =>{
-  // 내가 업데이트 하고자 하는 db의 컬렉션의 id를 뒤지면서 내가 수정하고자 하는 id랑 같은 id값을 가진 데이터를 찾는다
-  const userDoc = doc(db, "users", id)
-  // 내가 업데이트 하고자 하는 key를 어떻게 업데이트할지 준비,, 중요한점이 db에는 문자열로 저장되어있다. 그래서 createUsers()함수안에서 age를 생성할때 숫자열로 형변환 해줘야한다
-  const newField = {email: email + '1'};
-  // updateDoc()을 이용해서 업데이트
-  await updateDoc(userDoc, newField);
-}
-
-// 삭제 - D
-const deleteUser = async(id) =>{
-  // 내가 삭제하고자 하는 db의 컬렉션의 id를 뒤지면서 데이터를 찾는다
-  const userDoc = doc(db, "users", id);
-  // deleteDoc을 이용해서 삭제
-  await deleteDoc(userDoc);
-}
-
 
 
 // 띄워줄 데이터 key값에 고유ID를 넣어준다.
@@ -113,17 +92,18 @@ const deleteTodo = async(id) =>{
 const updateChecked = async( id) =>{
   // 내가 업데이트 하고자 하는 db의 컬렉션의 id를 뒤지면서 내가 수정하고자 하는 id랑 같은 id값을 가진 데이터를 찾는다
   const userDoc = doc(db, "todos", id)
+  var newField
   if(userDoc.checked === true){
     // 내가 업데이트 하고자 하는 key를 어떻게 업데이트할지 준비,, 중요한점이 db에는 문자열로 저장되어있다. 그래서 createUsers()함수안에서 age를 생성할때 숫자열로 형변환 해줘야한다
-  const newField = {checked: false};
+  newField = {checked: false};
   // updateDoc()을 이용해서 업데이트
-  await updateDoc(userDoc, newField);
+  
   } 
-  else if(userDoc.checked === false){
-    const newField = {checked: true};
+   newField = {checked:true}
+ 
     // updateDoc()을 이용해서 업데이트
     await updateDoc(userDoc, newField);
-  }
+  
     
 }
 updateChecked(id)
@@ -132,6 +112,7 @@ updateChecked(id)
           todo.id === id ? { ...todo, checked: !todo.checked } : todo,
         ),
       );
+
     },
     [],
   );
@@ -144,7 +125,7 @@ updateChecked(id)
       {/* <TodoList users={users} onRemove={onRemove} onToggle={onToggle} /> */}
       <div className='App'> 
           {/* onchange를 이용해서, 변하는 값을 state로 저장한다. */}
-        {showUsers} 
+        {/* {showUsers}  */}
        </div> 
     </TodoTemplate>
   );
